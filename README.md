@@ -1,3 +1,3 @@
 # IntrooApi
 ## About
-Introo is the innovative product in the market of car services as the solution in contact with a customer
+Introo is an innovative product on the market of car services as the solution in staying in touch with a customer
