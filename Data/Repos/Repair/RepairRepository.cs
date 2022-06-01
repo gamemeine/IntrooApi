@@ -7,10 +7,10 @@ namespace IntrooApi.Data
 {
     public class RepairRepository : IRepairRepository
     {
-        private readonly RepairContext context;
+        private readonly Models.AppDbContext context;
         private readonly IMapper mapper;
 
-        public RepairRepository(RepairContext context, IMapper mapper)
+        public RepairRepository(Models.AppDbContext context, IMapper mapper)
         {
             this.context = context;
             this.mapper = mapper;

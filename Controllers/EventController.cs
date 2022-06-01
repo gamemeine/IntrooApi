@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using IntrooApi.Services;
 using IntrooApi.Models;
 using IntrooApi.Data;
+using AutoMapper;
 
 namespace IntrooApi.Controllers
 {
@@ -15,18 +17,24 @@ namespace IntrooApi.Controllers
     [ApiController]
     public class EventController : ControllerBase
     {
-        private readonly IEventRepository events;
+        private readonly IEventRepository eventRepository;
+        private readonly IFileStoreService fileStoreService;
+        private readonly IStoreFileRepository storeFileRepository;
+        private readonly IMapper mapper;
 
-        public EventController(IEventRepository events)
+        public EventController(IEventRepository events, IMapper mapper, IFileStoreService fileStore, IStoreFileRepository storeFileRepository)
         {
-            this.events = events;
+            this.eventRepository = events;
+            this.mapper = mapper;
+            this.fileStoreService = fileStore;
+            this.storeFileRepository = storeFileRepository;
         }
 
         // GET: api/Event
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EventGeneralInfoDto>>> GetEvents()
         {
-            var allEvents = await events.GetAllEvents();
+            var allEvents = await eventRepository.GetAllEvents();
             return allEvents.ToList();
         }
 
@@ -34,7 +42,7 @@ namespace IntrooApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<EventDetailsDto>> GetEvent(int id)
         {
-            var _event = await events.GetEventById(id);
+            var _event = await eventRepository.GetEventById(id);
 
             if (_event == null) return NotFound();
 
@@ -44,33 +52,51 @@ namespace IntrooApi.Controllers
         // PUT: api/Event/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEvent(int id, Event _event)
+        public async Task<IActionResult> PutEvent(int id, EventPutDto editedEvent)
         {
-            if (id != _event.Id) return BadRequest();
+            if (id != editedEvent.Id) return BadRequest();
 
-            await events.UpdateEvent(_event);
+            var newEvent = mapper.Map<Event>(editedEvent);
+
+            foreach (var photoId in editedEvent.PhotosIds!)
+            {
+                var photoStoreFile = await storeFileRepository.GetStoreFileById(photoId);
+                if (photoStoreFile is null) return BadRequest($"Photo with id {photoId} not found");
+                newEvent.Photos.Add(photoStoreFile);
+            }
+
+            await eventRepository.UpdateEvent(newEvent);
             return NoContent();
         }
 
         // POST: api/Event
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Event>> PostEvent(Event _event)
+        public async Task<ActionResult<EventDetailsDto>> PostEvent(EventPostDto uploadedEvent)
         {
-            await events.AddEvent(_event);
+            var newEvent = mapper.Map<Event>(uploadedEvent);
 
-            var newEvent = events.GetEventById(_event.Id);
-            return CreatedAtAction("GetEvent", new { id = _event.Id }, newEvent);
+            foreach (var photoId in uploadedEvent.PhotosIds!)
+            {
+                var photoStoreFile = await storeFileRepository.GetStoreFileById(photoId);
+                if (photoStoreFile is null) return BadRequest($"Photo with id {photoId} not found");
+                newEvent.Photos.Add(photoStoreFile);
+            }
+
+            await eventRepository.AddEvent(newEvent);
+
+            var addedEvent = eventRepository.GetEventById(newEvent.Id);
+            return CreatedAtAction("GetEvent", new { id = newEvent.Id }, addedEvent);
         }
 
         // DELETE: api/Event/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEvent(int id)
         {
-            var _event = await events.GetEventById(id);
+            var _event = await eventRepository.GetEventById(id);
             if (_event == null) return NotFound();
 
-            await events.DeleteEvent(id);
+            await eventRepository.DeleteEvent(id);
             return NoContent();
         }
     }

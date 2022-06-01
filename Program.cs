@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using IntrooApi.Models;
 using IntrooApi.Data;
+using IntrooApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,9 +14,11 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddTransient<IRepairRepository, RepairRepository>();
 builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
 builder.Services.AddTransient<IEventRepository, EventRepository>();
+builder.Services.AddTransient<IStoreFileRepository, StoreFileRepository>();
+builder.Services.AddTransient<IFileStoreService, FileStoreService>();
 
 var dbPath = "Introo.db";
-builder.Services.AddDbContext<RepairContext>(options =>
+builder.Services.AddDbContext<IntrooApi.Models.AppDbContext>(options =>
     options.UseSqlite($"Data Source={dbPath}")
     .EnableSensitiveDataLogging()
     .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)

@@ -14,9 +14,9 @@ namespace IntrooApi.Controllers
     [ApiController]
     public class CarController : ControllerBase
     {
-        private readonly RepairContext _context;
+        private readonly Models.AppDbContext _context;
 
-        public CarController(RepairContext context)
+        public CarController(Models.AppDbContext context)
         {
             _context = context;
         }

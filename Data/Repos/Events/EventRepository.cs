@@ -7,10 +7,10 @@ namespace IntrooApi.Data
 {
     public class EventRepository : IEventRepository
     {
-        private readonly RepairContext context;
+        private readonly Models.AppDbContext context;
         private readonly IMapper mapper;
 
-        public EventRepository(RepairContext context, IMapper mapper)
+        public EventRepository(Models.AppDbContext context, IMapper mapper)
         {
             this.context = context;
             this.mapper = mapper;
@@ -30,6 +30,7 @@ namespace IntrooApi.Data
                                     .ThenInclude(x => x.Car)
                                     .Include(x => x.Repair)
                                     .ThenInclude(x => x.Customer)
+                                    .Include(x => x.Photos)
                                     .FirstOrDefaultAsync(x => x.Id == id);
 
             return mapper.Map<EventDetailsDto>(_event);
@@ -37,6 +38,10 @@ namespace IntrooApi.Data
 
         public async Task AddEvent(Event _event)
         {
+            foreach (var photo in _event.Photos!)
+            {
+                context.StoreFiles.Attach(photo);
+            }
             await context.Events.AddAsync(_event);
             await Save();
         }
@@ -52,25 +57,10 @@ namespace IntrooApi.Data
         }
 
 
-        public async Task UpdateEvent(Event _event)
+        public async Task UpdateEvent(Event newEvent)
         {
-            var repair = await context.Repairs.FindAsync(_event.RepairId);
-
-            if (repair != null) _event.Repair = repair;
-
-            context.Entry(_event).State = EntityState.Modified;
-
-            try
-            {
-                await Save();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (EventExists(_event))
-                {
-                    throw;
-                }
-            }
+            await DeleteEvent(newEvent.Id);
+            await AddEvent(newEvent);
         }
 
         public async Task Save()

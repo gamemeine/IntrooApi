@@ -7,10 +7,10 @@ namespace IntrooApi.Data
 {
     public class CustomerRepository : ICustomerRepository
     {
-        private readonly RepairContext context;
+        private readonly Models.AppDbContext context;
         private readonly IMapper mapper;
 
-        public CustomerRepository(RepairContext context, IMapper mapper)
+        public CustomerRepository(Models.AppDbContext context, IMapper mapper)
         {
             this.context = context;
             this.mapper = mapper;

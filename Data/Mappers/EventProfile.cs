@@ -9,6 +9,8 @@ namespace IntrooApi.Data
         {
             CreateMap<Event, EventGeneralInfoDto>();
             CreateMap<Event, EventDetailsDto>();
+            CreateMap<EventPostDto, Event>();
+            CreateMap<EventPutDto, Event>();
         }
     }
 }

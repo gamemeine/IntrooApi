@@ -10,14 +10,29 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace IntrooApi.Migrations
 {
-    [DbContext(typeof(RepairContext))]
-    [Migration("20220515140007_FixRelationFckup")]
-    partial class FixRelationFckup
+    [DbContext(typeof(AppDbContext))]
+    [Migration("20220601111854_ConfigureManyToManyRelationsOnEventsAndStoreFiles")]
+    partial class ConfigureManyToManyRelationsOnEventsAndStoreFiles
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
+
+            modelBuilder.Entity("EventStoreFile", b =>
+                {
+                    b.Property<int>("EventsId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PhotosId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("EventsId", "PhotosId");
+
+                    b.HasIndex("PhotosId");
+
+                    b.ToTable("EventStoreFile");
+                });
 
             modelBuilder.Entity("IntrooApi.Models.Car", b =>
                 {
@@ -49,12 +64,15 @@ namespace IntrooApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Surname")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -63,6 +81,31 @@ namespace IntrooApi.Migrations
                 });
 
             modelBuilder.Entity("IntrooApi.Models.Event", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RepairId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairId");
+
+                    b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("IntrooApi.Models.Repair", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -77,36 +120,10 @@ namespace IntrooApi.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("StartDate")
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Events");
-                });
-
-            modelBuilder.Entity("IntrooApi.Models.Repair", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("CarId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("StartDate")
+                    b.Property<DateTime>("StartDate")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Status")
@@ -121,15 +138,71 @@ namespace IntrooApi.Migrations
                     b.ToTable("Repairs");
                 });
 
+            modelBuilder.Entity("IntrooApi.Models.StoreFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AbsoluteDirectory")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("AccessCode")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StoreDirectory")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StoreFiles");
+                });
+
+            modelBuilder.Entity("EventStoreFile", b =>
+                {
+                    b.HasOne("IntrooApi.Models.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IntrooApi.Models.StoreFile", null)
+                        .WithMany()
+                        .HasForeignKey("PhotosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("IntrooApi.Models.Event", b =>
+                {
+                    b.HasOne("IntrooApi.Models.Repair", "Repair")
+                        .WithMany("Events")
+                        .HasForeignKey("RepairId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Repair");
+                });
+
             modelBuilder.Entity("IntrooApi.Models.Repair", b =>
                 {
                     b.HasOne("IntrooApi.Models.Car", "Car")
                         .WithMany("Repairs")
-                        .HasForeignKey("CarId");
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("IntrooApi.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId");
+                        .WithMany("Repairs")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Car");
 
@@ -139,6 +212,16 @@ namespace IntrooApi.Migrations
             modelBuilder.Entity("IntrooApi.Models.Car", b =>
                 {
                     b.Navigation("Repairs");
+                });
+
+            modelBuilder.Entity("IntrooApi.Models.Customer", b =>
+                {
+                    b.Navigation("Repairs");
+                });
+
+            modelBuilder.Entity("IntrooApi.Models.Repair", b =>
+                {
+                    b.Navigation("Events");
                 });
 #pragma warning restore 612, 618
         }

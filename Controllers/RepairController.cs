@@ -15,10 +15,10 @@ namespace IntrooApi.Controllers
     [ApiController]
     public class RepairController : ControllerBase
     {
-        private readonly RepairContext _context;
+        private readonly Models.AppDbContext _context;
         private IRepairRepository repairs;
 
-        public RepairController(IRepairRepository repairs, RepairContext context)
+        public RepairController(IRepairRepository repairs, Models.AppDbContext context)
         {
             this._context = context;
             this.repairs = repairs;
