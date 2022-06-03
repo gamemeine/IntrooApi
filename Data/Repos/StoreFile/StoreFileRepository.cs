@@ -17,7 +17,7 @@ namespace IntrooApi.Data
             await Save();
         }
 
-        public async Task DeleteStoreFile(int id)
+        public async Task DeleteStoreFileById(int id)
         {
             var file = await context.StoreFiles.FindAsync(id);
 
@@ -37,9 +37,9 @@ namespace IntrooApi.Data
             return await context.StoreFiles.FindAsync(id);
         }
 
-        public async Task<StoreFile> GetStoreFileByAccessCode(Guid accessCode)
+        public async Task<StoreFile> GetStoreFileByName(string name)
         {
-            return context.StoreFiles.FirstOrDefault(x => x.AccessCode == accessCode);
+            return context.StoreFiles.FirstOrDefault(f => f.FileName == name);
         }
 
         public async Task Save()
@@ -52,14 +52,5 @@ namespace IntrooApi.Data
             throw new NotImplementedException();
         }
 
-        public async Task DeleteStoreFileByAccessCode(Guid accessCode)
-        {
-            var file = context.StoreFiles.FirstOrDefault(x => x.AccessCode == accessCode);
-
-            if (file is null) throw new Exception("Not found!");
-
-            context.StoreFiles.Remove(file);
-            await Save();
-        }
     }
 }

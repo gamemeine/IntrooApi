@@ -3,11 +3,10 @@ namespace IntrooApi.Models
     public class StoreFile
     {
         public int Id { get; set; }
-        public Guid AccessCode { get; set; } = Guid.NewGuid();
         public string FileName { get; set; }
         public string StoreDirectory { get; set; }
         public string AbsoluteDirectory { get; set; }
-        public string Source => $"/files/{AccessCode}";
+        public string Source => $"/resource/{Id}";
 
         public ICollection<Event>? Events { get; set; }
 
@@ -19,20 +18,10 @@ namespace IntrooApi.Models
         }
     }
 
-    public class StoreFileDto
+    public class StoreFileDetailsDto
     {
         public int Id { get; set; }
-        public Guid AccessCode { get; set; }
         public string FileName { get; set; }
-        public string StoreDirectory { get; set; }
-        public string AbsoluteDirectory { get; set; }
-        public string Source { get; }
-    }
-
-    public class StoreFileSourceDto
-    {
-        public int Id { get; set; }
-        public Guid AccessCode { get; set; }
-        public string Source => $"/files/{AccessCode}";
+        public string Source => $"/resource/{FileName}";
     }
 }

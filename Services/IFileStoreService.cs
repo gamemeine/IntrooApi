@@ -4,8 +4,10 @@ namespace IntrooApi.Services
 {
     public interface IFileStoreService
     {
+        Task<ICollection<StoreFile>> GetAllFiles();
+        Task<StoreFile> GetFile(int id);
+        Task<StoreFile> GetFileByName(string name);
         Task<StoreFile> AddFile(IFormFile file);
-        Task<StoreFileDto> GetFile(Guid accessCode);
-        Task DeleteFile(Guid accessCode);
+        Task DeleteFile(int id);
     }
 }

@@ -50,6 +50,6 @@ namespace IntrooApi.Models
         public string? Title { get; set; }
         public string? Description { get; set; }
         public RepairGeneralInfoDto? Repair { get; set; }
-        public ICollection<StoreFileSourceDto>? Photos { get; set; }
+        public ICollection<StoreFileDetailsDto>? Photos { get; set; }
     }
 }

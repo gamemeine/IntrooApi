@@ -5,7 +5,6 @@ public class StoreFileProfile : Profile
 {
     public StoreFileProfile()
     {
-        CreateMap<StoreFile, StoreFileDto>();
-        CreateMap<StoreFile, StoreFileSourceDto>();
+        CreateMap<StoreFile, StoreFileDetailsDto>();
     }
 }

@@ -36,22 +36,29 @@ namespace IntrooApi.Services
             return storeFile;
         }
 
-        public async Task DeleteFile(Guid accessCode)
+        public async Task DeleteFile(int id)
         {
-            var storeFile = await storeFiles.GetStoreFileByAccessCode(accessCode);
+            var storeFile = await storeFiles.GetStoreFileById(id);
             var fileDirectory = GetFileAbsolutePath(storeFile.StoreDirectory);
 
-            await storeFiles.DeleteStoreFileByAccessCode(accessCode);
+            await storeFiles.DeleteStoreFileById(id);
             System.IO.File.Delete(fileDirectory);
         }
 
-        public async Task<StoreFileDto> GetFile(Guid accessCode)
+        public async Task<StoreFile> GetFile(int id)
         {
-            var storeFile = await storeFiles.GetStoreFileByAccessCode(accessCode);
-            var storeFileDto = mapper.Map<StoreFileDto>(storeFile);
-            storeFileDto.AbsoluteDirectory = GetFileAbsolutePath(storeFile.StoreDirectory);
+            return await storeFiles.GetStoreFileById(id);
+        }
 
-            return storeFileDto;
+        public async Task<StoreFile> GetFileByName(string name)
+        {
+            return await storeFiles.GetStoreFileByName(name);
+        }
+
+        public async Task<ICollection<StoreFile>> GetAllFiles()
+        {
+            var all = await storeFiles.GetAllStoreFiles();
+            return all.ToList();
         }
 
         private string GetFileAbsolutePath(string storeDirectory)

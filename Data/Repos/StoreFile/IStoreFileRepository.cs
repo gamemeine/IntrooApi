@@ -6,12 +6,10 @@ namespace IntrooApi.Data
     {
         Task<IEnumerable<StoreFile>> GetAllStoreFiles();
         Task<StoreFile> GetStoreFileById(int id);
-        Task<StoreFile> GetStoreFileByAccessCode(Guid accessCode);
+        Task<StoreFile> GetStoreFileByName(string name);
         Task AddStoreFile(StoreFile file);
-        Task DeleteStoreFile(int id);
-        Task DeleteStoreFileByAccessCode(Guid accessCode);
+        Task DeleteStoreFileById(int id);
         Task UpdateStoreFile(StoreFile file);
         Task Save();
-
     }
 }
