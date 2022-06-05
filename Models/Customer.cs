@@ -2,13 +2,8 @@ namespace IntrooApi.Models
 {
     public class Customer
     {
-        public Customer()
-        {
-            CreatedAt = DateTime.Now;
-        }
-
         public int Id { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string Name { get; set; }
         public string Surname { get; set; }
         public string PhoneNumber { get; set; }

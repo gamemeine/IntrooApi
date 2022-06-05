@@ -4,17 +4,11 @@ namespace IntrooApi.Models
 {
     public class Repair
     {
-        public Repair()
-        {
-            CreatedAt = DateTime.Now;
-            Status = RepairStatus.Started;
-        }
-
         public int Id { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public RepairStatus Status { get; set; }
+        public RepairStatus Status { get; set; } = RepairStatus.Started;
 
         public int CustomerId { get; set; }
         public Customer? Customer { get; set; }

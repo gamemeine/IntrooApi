@@ -2,13 +2,8 @@ namespace IntrooApi.Models
 {
     public class Car
     {
-        public Car()
-        {
-            CreatedAt = DateTime.Now;
-        }
-
         public int Id { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string? Model { get; set; }
         public string? Plate { get; set; }
 
