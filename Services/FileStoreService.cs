@@ -21,8 +21,9 @@ namespace IntrooApi.Services
         {
             if (file.Length == 0) throw new Exception("File is empty!");
 
-            var fileName = Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(file.FileName));
-            var fileStorePath = fileName;
+            var fileExtension = Path.GetExtension(file.FileName);
+            var fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
+            var fileStorePath = Path.ChangeExtension(fileName, fileExtension);
             var fileFullPath = GetFileAbsolutePath(fileStorePath);
 
             using (var stream = System.IO.File.Create(fileFullPath))
@@ -30,7 +31,15 @@ namespace IntrooApi.Services
                 await file.CopyToAsync(stream);
             }
 
-            var storeFile = new StoreFile(fileName, fileStorePath, fileFullPath);
+            var storeFile = new StoreFile
+            {
+                Name = fileName,
+                Extension = fileExtension,
+                Type = "",
+                StoreDirectory = fileStorePath,
+                AbsoluteDirectory = fileFullPath,
+            };
+
             await storeFiles.AddStoreFile(storeFile);
 
             return storeFile;

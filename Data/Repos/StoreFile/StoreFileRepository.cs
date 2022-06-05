@@ -39,7 +39,7 @@ namespace IntrooApi.Data
 
         public async Task<StoreFile> GetStoreFileByName(string name)
         {
-            return context.StoreFiles.FirstOrDefault(f => f.FileName == name);
+            return context.StoreFiles.FirstOrDefault(f => f.Name == name);
         }
 
         public async Task Save()

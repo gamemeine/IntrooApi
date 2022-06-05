@@ -21,7 +21,7 @@ public class ResourceController : ControllerBase
 
         var fileStream = System.IO.File.OpenRead(fileData.AbsoluteDirectory);
 
-        return File(fileStream, "application/octet-stream", fileData.FileName);
+        return File(fileStream, "application/octet-stream", fileData.Name);
     }
 
 
