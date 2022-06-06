@@ -36,6 +36,8 @@ public class FileController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<StoreFileDetailsDto>> CreateFile([FromForm] IFormFile file)
     {
+        if (file is null) return BadRequest();
+
         var createdFile = await fileStoreService.AddFile(file);
         var createdFileDto = mapper.Map<StoreFileDetailsDto>(createdFile);
         return CreatedAtAction("GetFile", new { id = createdFile.Id }, createdFileDto);
