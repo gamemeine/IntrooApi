@@ -1,6 +1,7 @@
 using AutoMapper;
 using IntrooApi.Data;
 using IntrooApi.Models;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace IntrooApi.Services
 {
@@ -23,6 +24,7 @@ namespace IntrooApi.Services
 
             var fileExtension = Path.GetExtension(file.FileName);
             var fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
+
             var fileStorePath = Path.ChangeExtension(fileName, fileExtension);
             var fileFullPath = GetFileAbsolutePath(fileStorePath);
 
@@ -30,12 +32,15 @@ namespace IntrooApi.Services
             {
                 await file.CopyToAsync(stream);
             }
+            var provider = new FileExtensionContentTypeProvider();
+            var fileType = "";
+            provider.TryGetContentType(fileFullPath, out fileType);
 
             var storeFile = new StoreFile
             {
                 Name = fileName,
                 Extension = fileExtension,
-                Type = "",
+                Type = fileType,
                 StoreDirectory = fileStorePath,
                 AbsoluteDirectory = fileFullPath,
             };
@@ -64,9 +69,9 @@ namespace IntrooApi.Services
             return await storeFiles.GetStoreFileByName(name);
         }
 
-        public async Task<ICollection<StoreFile>> GetAllFiles()
+        public async Task<ICollection<StoreFile>> GetAllFiles(FileParameters? parameters)
         {
-            var all = await storeFiles.GetAllStoreFiles();
+            var all = await storeFiles.GetAllStoreFiles(parameters);
             return all.ToList();
         }
 

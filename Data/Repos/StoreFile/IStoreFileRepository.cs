@@ -4,7 +4,7 @@ namespace IntrooApi.Data
 {
     public interface IStoreFileRepository
     {
-        Task<IEnumerable<StoreFile>> GetAllStoreFiles();
+        Task<IEnumerable<StoreFile>> GetAllStoreFiles(FileParameters? parameters);
         Task<StoreFile> GetStoreFileById(int id);
         Task<StoreFile> GetStoreFileByName(string name);
         Task AddStoreFile(StoreFile file);

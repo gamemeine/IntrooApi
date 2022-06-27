@@ -27,9 +27,9 @@ namespace IntrooApi.Data
             await Save();
         }
 
-        public async Task<IEnumerable<StoreFile>> GetAllStoreFiles()
+        public async Task<IEnumerable<StoreFile>> GetAllStoreFiles(FileParameters? parameters)
         {
-            return context.StoreFiles.ToList();
+            return context.StoreFiles.Where(x => parameters.Type == null || x.Type.Contains(parameters.Type)).ToList();
         }
 
         public async Task<StoreFile> GetStoreFileById(int id)

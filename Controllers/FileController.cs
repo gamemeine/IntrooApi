@@ -1,4 +1,5 @@
 using AutoMapper;
+using IntrooApi.Data;
 using IntrooApi.Models;
 using IntrooApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -27,9 +28,9 @@ public class FileController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ICollection<StoreFileDetailsDto>>> GetAllFiles()
+    public async Task<ActionResult<ICollection<StoreFileDetailsDto>>> GetAllFiles([FromQuery] FileParameters parameters)
     {
-        var files = await fileStoreService.GetAllFiles();
+        var files = await fileStoreService.GetAllFiles(parameters);
         return mapper.Map<List<StoreFileDetailsDto>>(files);
     }
 

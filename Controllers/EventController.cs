@@ -58,12 +58,16 @@ namespace IntrooApi.Controllers
 
             var newEvent = mapper.Map<Event>(editedEvent);
 
-            foreach (var photoId in editedEvent.PhotosIds!)
+            if (editedEvent.PhotosIds is not null)
             {
-                var photoStoreFile = await storeFileRepository.GetStoreFileById(photoId);
-                if (photoStoreFile is null) return BadRequest($"Photo with id {photoId} not found");
-                newEvent.Photos.Add(photoStoreFile);
+                foreach (var photoId in editedEvent?.PhotosIds!)
+                {
+                    var photoStoreFile = await storeFileRepository.GetStoreFileById(photoId);
+                    if (photoStoreFile is null) return BadRequest($"Photo with id {photoId} not found");
+                    newEvent.Photos.Add(photoStoreFile);
+                }
             }
+
 
             await eventRepository.UpdateEvent(newEvent);
             return NoContent();
